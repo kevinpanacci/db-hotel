@@ -15,7 +15,7 @@
 
 
 ●Calcola il totale degli ordini accepted
-    SELECT COUNT(*) FROM `pagamenti` WHERE `status` = 'accepted';
+    SELECT COUNT(`status`) as `totale_accettati`, `status` FROM `pagamenti` WHERE `status` = 'accepted';
 
 
 ●Qual è il prezzo massimo pagato?
@@ -27,4 +27,41 @@
 
 
 ●Quanti posti letto ha l’hotel in totale?
-    SELECT SUM(beds) FROM stanze;
+    SELECT SUM(beds) FROM `stanze`;
+
+    
+ESERCIZI IN CLASSE:
+
+●Selezionare i paganti e i relativi dati ospite
+    SELECT * FROM `paganti`
+    INNER JOIN `ospiti`
+    ON `ospiti`.`id` = `paganti`.`ospite_id`
+E se volessi solo quelli con la carta d'identita?
+aggiungo: WHERE `ospiti`.`document_type` = 'CI'
+
+
+●Selezionare tutti i pagamenti con i dati relativi alla prenotazione
+    SELECT * FROM `pagamenti`
+    INNER JOIN `prenotazioni`
+    ON `pagamenti`.`prenotazione_id` = `prenotazioni`.`id`
+
+
+●Selezionare da prenotazioni quali sono i dati della stanza e poi anche il tipo di configurazioni
+    SELECT `prenotazioni`.`id`, `prenotazioni`.`stanza_id`, `prenotazioni`.`configurazione_id`, `stanze`.`room_number`, `stanze`.`floor` FROM `prenotazioni` FROM `prenotazioni`
+    INNER JOIN `stanze`
+    ON `stanze`.`id` = `prenotazioni`.`stanza_id`
+    INNER JOIN `configurazioni`
+    ON `prenotazioni`.`configurazione_id` = `configurazioni`.`id`
+
+
+●Raggruppiamo le prenotazioni per stanza
+    SELECT COUNT(`stanza_id`), `stanza_id` FROM `prenotazioni`
+    GROUP BY `stanza_id`
+
+
+●ESERCIZIO COME SI CHIAMA CHI HA PRENOTATO PIU DI 2 VOLTE?
+    SELECT COUNT(`prenotazioni_has_ospiti`, `ospite_id`) as `numero_prenotazioni`  FROM `prenotazioni_has_ospiti`
+    INNER JOIN `ospiti`
+    ON `ospiti`.`id` = `prenotazioni_has_ospiti`.`ospite_id`
+    GROUP BY `prenotazioni_has_ospiti`.`ospite_id`
+    HAVING COUNT(`prenotazioni_has_ospiti`.`ospite_id`) > 2
